@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">BMI</string>
+    <string name="calculate">CALCULATE</string>
+    <string name="bmi">BMI:</string>
+    <string name="height">Height</string>
+    <string name="weight">Weight</string>
+    <string name="author">Andrzej Sienkiewicz</string>
+    <string name="picture">Author\'s picture</string>
+    <string name="metric">Metric (kg, cm)</string>
+    <string name="imperial">Imperial (lb, in)</string>
+    <string name="about">About</string>
+    <string name="save">save</string>
+    <string name="home">Home</string>
+</resources>

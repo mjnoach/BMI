@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- INPUT LABEL -->
+    <dimen name="input_label_height">27dp</dimen>
+    <dimen name="input_label_margin_top">32dp</dimen>
+    <dimen name="input_label_text_size">20sp</dimen>
+
+    <!-- INPUT -->
+    <dimen name="input_width">0dp</dimen>
+    <dimen name="input_height">60dp</dimen>
+    <dimen name="input_margin_top">16dp</dimen>
+
+    <!-- GUIDLINE -->
+    <dimen name="guidline_vertical_left">32dp</dimen>
+    <dimen name="guidline_vertical_right">32dp</dimen>
+    <dimen name="guidline_horizontal_end">32dp</dimen>
+
+    <!-- CALCULATE BTN -->
+    <dimen name="calculate_width">0dp</dimen>
+    <dimen name="calculate_height">80dp</dimen>
+    <dimen name="calculate_margin_bottom">32dp</dimen>
+    <dimen name="calculate_margin_top">8dp</dimen>
+    <dimen name="calculate_margin_horizontal">16dp</dimen>
+    <dimen name="calculate_text_size">20sp</dimen>
+
+    <!-- SWITCH -->
+    <dimen name="switch_margin_top">32dp</dimen>
+    <!-- SWITCH -->
+    <dimen name="switch_land_margin_bottom">32dp</dimen>
+    <dimen name="switch_land_margin_top">64dp</dimen>
+
+    <!-- SWITCH LABEL -->
+    <dimen name="switch_label_margin_bottom">8dp</dimen>
+    <dimen name="switch_label_margin_top">8dp</dimen>
+    <dimen name="switch_label_margin_end">16dp</dimen>
+    <dimen name="switch_label_margin_start">16dp</dimen>
+    <dimen name="switch_label_text_size">17sp</dimen>
+
+
+    <!-- BMI -->
+    <dimen name="bmi_margin_top">32dp</dimen>
+    <dimen name="bmi_text_size">40sp</dimen>
+
+    <!-- RESULT -->
+    <dimen name="result_margin_top">32dp</dimen>
+    <dimen name="result_text_size">55sp</dimen>]
+
+
+    <!-- PICTURE -->
+    <dimen name="picture_width">229dp</dimen>
+    <dimen name="picture_height">205dp</dimen>
+    <dimen name="picture_bottom">8dp</dimen>
+    <dimen name="picture_top">64dp</dimen>
+
+    <!-- NAME -->
+    <dimen name="name_top">64dp</dimen>
+    <dimen name="name_text_size">35sp</dimen>
+
+
+    <dimen name="text_size_small">17sp</dimen>
+
+</resources>
