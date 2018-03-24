@@ -3,98 +3,77 @@ package com.example.andrzej.lab2_bmi;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.Map;
-
 
 public class MainActivity extends AppCompatActivity {
+
+
+    private static final String MISSING_VAL = "Missing value";
+    private static final String WRONG_VAL = "Value must be greater than zero";
+    private static final String ERR_WEIGHT = Bmi.ERR_WEIGHT;
+    private static final String ERR_HEIGHT = Bmi.ERR_HEIGHT;
+    private static final String ERR_W_H = Bmi.ERR_W_H;
+
+    public static final String RESULT_INTENT_EXTRA_BMI_VAL = "bmiValue";
+    public static final String RESULT_INTENT_EXTRA_BMI_CAT = "bmiCategory";
+
+    private static final String TOAST_SAVE_SUCCESS = "Saved successfully!";
+    private static final String TOAST_SAVE_FAIL = "Save FAILED";
+
+    private static final String SHARED_PREF_NAME = "com.example.app";
+    private static final String SHARED_PREF_WEIGHT = "weight";
+    private static final String SHARED_PREF_HEIGHT = "height";
+    private static final String SHARED_PREF_UNITS = "units";
+
+
+    private EditText weightET;
+    private EditText heightET;
+    private Switch unitsSwitch;
+    private Button calculate;
+    private TextView metricLabel;
+    private TextView imperialLLabel;
+
+
+    private void initializeInterfaceHandles() {
+        weightET = findViewById(R.id.weight_et);
+        heightET = findViewById(R.id.height_et);
+        unitsSwitch = findViewById(R.id.switch_units);
+        calculate = findViewById(R.id.calculate);
+        metricLabel = findViewById(R.id.metric);
+        imperialLLabel = findViewById(R.id.imperial);
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        initializeInterfaceHandles();
+        laodSavedData();
+        initializeCalculateBtn();
 
-        retrieveSavedData();
+        unitsSwitch.setOnClickListener(new View.OnClickListener() {
 
 
-        findViewById(R.id.calculate).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                EditText weightET = findViewById(R.id.weight_et);
-                EditText heightET = findViewById(R.id.height_et);
-
-                // Bitwise AND operator used to check both conditions (which set errors if arguments are invalid)
-                if (validateInput(weightET) & validateInput(heightET)) {
-                    String weightInput = weightET.getText().toString();
-                    String heightInput = heightET.getText().toString();
-
-                    Switch unitsSwitch = findViewById(R.id.switch_units);
-                    Boolean units = unitsSwitch.isChecked();
-
-                    try {
-                        Bmi bmi;
-                        if (!units)
-                            bmi = new BmiKgCm(Double.valueOf(weightInput), Double.valueOf(heightInput));
-                        else
-                            bmi = new BmiLbIn(Double.valueOf(weightInput), Double.valueOf(heightInput));
-                        Double bmiValue = bmi.getBmi();
-
-                        Intent intent = new Intent(MainActivity.this, ResultActivity.class);
-                        intent.putExtra("bmiValue", bmiValue);
-                        intent.putExtra("bmiCategory", bmi.getCategory());
-
-                        intent.putExtra("weightInput", weightInput);
-                        intent.putExtra("heightInput", heightInput);
-                        intent.putExtra("units", units);
-                        startActivity(intent);
-                    }
-                    catch (IllegalArgumentException e) {
-                        if (e.getMessage().equals("0"))
-                            weightET.setError("Value must be greater than zero");
-                        if (e.getMessage().equals("1"))
-                            heightET.setError("Value must be greater than zero");
-                        if (e.getMessage().equals("2")) {
-                            weightET.setError("Value must be greater than zero");
-                            heightET.setError("Value must be greater than zero");
-                        }
-                    }
-                }
-            }
-
-            private boolean validateInput(EditText input) {
-                String inputString = input.getText().toString();
-                if (inputString.equals("")) {
-                    input.setError("Missing value");
-                    return false;
-                }
-                return true;
-            }
-        });
-
-
-        findViewById(R.id.switch_units).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                EditText weightET = findViewById(R.id.weight_et);
-                EditText heightET = findViewById(R.id.height_et);
-
                 eraseInput(weightET);
                 eraseInput(heightET);
 
                 toggleUnitsColors();
             }
+
 
             private void eraseInput(EditText input) {
                 input.setText("");
@@ -102,52 +81,80 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-//    private void restoreInstance() {
-//        Intent intent = getIntent();
-//        Boolean units = intent.getBooleanExtra("units", false);
-//        String weightInput = intent.getStringExtra("weightInput");
-//        String heightInput = intent.getStringExtra("heightInput");
-//
-//        EditText weightET = findViewById(R.id.weight_et);
-//        EditText heightET = findViewById(R.id.height_et);
-//        Switch unitsSwitch = findViewById(R.id.switch_units);
-//
-//        weightET.setText(weightInput);
-//        heightET.setText(heightInput);
-//        unitsSwitch.setChecked(units);
-//        if (units)
-//            setUnitsImperial();
-//        else
-//            setUnitsMetric();
-//    }
 
-//    @Override
-//    protected void onSaveInstanceState(Bundle savedInstanceState) {
-//        super.onSaveInstanceState(savedInstanceState);
-//
-//        Switch unitsSwitch = findViewById(R.id.switch_units);
-//        // Metric: true
-//        // Imperial: false
-//        Boolean units = !unitsSwitch.isChecked();
-//        savedInstanceState.putBoolean("units", units);
-//    }
-//
-//    @Override
-//    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-//        super.onRestoreInstanceState(savedInstanceState);
-//
-//        Boolean units = savedInstanceState.getBoolean("units");
-//        Switch unitsSwitch = findViewById(R.id.switch_units);
-//        if (units & unitsSwitch.isChecked())
-//            unitsSwitch.setChecked(false);
-//    }
+    private void initializeCalculateBtn() {
+        calculate.setOnClickListener(new View.OnClickListener() {
+
+
+            @Override
+            public void onClick(View view) {
+                // Bitwise AND operator used to check both conditions (which set errors if arguments are invalid)
+                if (validateInput(weightET) & validateInput(heightET)) {
+                    String weightInput = weightET.getText().toString();
+                    String heightInput = heightET.getText().toString();
+
+                    Boolean units = unitsSwitch.isChecked();
+
+                    processInput(weightInput ,heightInput, units);
+                }
+            }
+
+
+            private void processInput(String weight, String height, Boolean units) {
+                try {
+                    Bmi bmi = calcualateBmi(weight, height, units);
+                    Double bmiValue = bmi.getBmi();
+                    Integer bmiCategory = bmi.getCategory();
+
+                    startResultActivity(MainActivity.this, bmiValue, bmiCategory);
+                }
+                catch (IllegalArgumentException e) {
+                    handleErrors(e);
+                }
+            }
+
+
+            private void handleErrors(IllegalArgumentException e) {
+                if (e.getMessage().equals(ERR_WEIGHT) || e.getMessage().equals(ERR_W_H))
+                    weightET.setError(WRONG_VAL);
+                if (e.getMessage().equals(ERR_HEIGHT) || e.getMessage().equals(ERR_W_H))
+                    heightET.setError(WRONG_VAL);
+            }
+
+
+            private void startResultActivity(Context context, Double bmiValue, int bmiCategory) {
+                Intent starter = new Intent(context, ResultActivity.class);
+                starter.putExtra(RESULT_INTENT_EXTRA_BMI_VAL, bmiValue);
+                starter.putExtra(RESULT_INTENT_EXTRA_BMI_CAT, bmiCategory);
+                context.startActivity(starter);
+            }
+
+
+            private Bmi calcualateBmi(String weight, String height, Boolean units) {
+                Bmi bmi;
+                if (!units)
+                    bmi = new BmiKgCm(Double.valueOf(weight), Double.valueOf(height));
+                else
+                    bmi = new BmiLbIn(Double.valueOf(weight), Double.valueOf(height));
+                return bmi;
+            }
+
+
+            private boolean validateInput(EditText input) {
+                String inputString = input.getText().toString();
+                if (inputString.equals("") || inputString.equals(".")) {
+                    input.setError(MISSING_VAL);
+                    return false;
+                }
+                return true;
+            }
+        });
+
+    }
+
 
     private void toggleUnitsColors() {
-        Switch units = findViewById(R.id.switch_units);
-        TextView metricLabel = findViewById(R.id.metric);
-        TextView imperialLLabel = findViewById(R.id.imperial);
-
-        if (!units.isChecked()) {
+        if (!unitsSwitch.isChecked()) {
             metricLabel.setTextColor(getColor(R.color.colorAccent));
             imperialLLabel.setTextColor(getColor(R.color.Grey));
 
@@ -158,12 +165,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
     private void setUnitsImperial() {
-        TextView metricLabel = findViewById(R.id.metric);
-        TextView imperialLLabel = findViewById(R.id.imperial);
         imperialLLabel.setTextColor(getColor(R.color.colorAccent));
         metricLabel.setTextColor(getColor(R.color.Grey));
     }
+
 
     private void setUnitsMetric() {
         setUnitsImperial();
@@ -187,11 +194,11 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.save:
                 if (saveData()) {
-                    Toast toast = Toast.makeText(getApplicationContext(), "Saved successfully!", Toast.LENGTH_SHORT);
+                    Toast toast = Toast.makeText(getApplicationContext(), TOAST_SAVE_SUCCESS, Toast.LENGTH_SHORT);
                     toast.show();
                 }
                 else {
-                    Toast toast = Toast.makeText(getApplicationContext(), "Save FAILED", Toast.LENGTH_SHORT);
+                    Toast toast = Toast.makeText(getApplicationContext(), TOAST_SAVE_FAIL, Toast.LENGTH_SHORT);
                     toast.show();
                 }
                 break;
@@ -201,35 +208,27 @@ public class MainActivity extends AppCompatActivity {
 
 
     private boolean saveData() {
-        SharedPreferences sharedPref = getSharedPreferences("com.example.app", Context.MODE_PRIVATE);
-
-        EditText weightET = findViewById(R.id.weight_et);
-        EditText heightET = findViewById(R.id.height_et);
-        Switch unitsSwitch = findViewById(R.id.switch_units);
+        SharedPreferences sharedPref = getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
 
         String weightInput = weightET.getText().toString();
         String heightInput = heightET.getText().toString();
         Boolean units = unitsSwitch.isChecked();
 
         boolean success;
-        success = sharedPref.edit().putString("weight", weightInput).commit();
-        success &= sharedPref.edit().putString("height", heightInput).commit();
-        success &= sharedPref.edit().putBoolean("units", units).commit();
+        success = sharedPref.edit().putString(SHARED_PREF_WEIGHT, weightInput).commit();
+        success &= sharedPref.edit().putString(SHARED_PREF_HEIGHT, heightInput).commit();
+        success &= sharedPref.edit().putBoolean(SHARED_PREF_UNITS, units).commit();
 
         return success;
     }
 
 
-    private void retrieveSavedData() {
-        SharedPreferences sharedPref = getSharedPreferences("com.example.app", Context.MODE_PRIVATE);
+    private void laodSavedData() {
+        SharedPreferences sharedPref = getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
 
-        EditText weightET = findViewById(R.id.weight_et);
-        EditText heightET = findViewById(R.id.height_et);
-        Switch unitsSwitch = findViewById(R.id.switch_units);
-
-        weightET.setText(sharedPref.getString("weight", null));
-        heightET.setText(sharedPref.getString("height", null));
-        unitsSwitch.setChecked(sharedPref.getBoolean("units", false));
+        weightET.setText(sharedPref.getString(SHARED_PREF_WEIGHT, null));
+        heightET.setText(sharedPref.getString(SHARED_PREF_HEIGHT, null));
+        unitsSwitch.setChecked(sharedPref.getBoolean(SHARED_PREF_UNITS, false));
 
         if (unitsSwitch.isChecked())
             setUnitsImperial();

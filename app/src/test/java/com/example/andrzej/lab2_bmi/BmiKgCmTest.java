@@ -4,9 +4,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-/**
- * Created by andrzej on 14/03/2018.
- */
+
 public class BmiKgCmTest {
     @Test
     public void calculateBmi() throws Exception {
@@ -25,7 +23,7 @@ public class BmiKgCmTest {
 
     @Test (expected = IllegalArgumentException.class)
     public void bmiInvalidInput() {
-        Bmi bmi = new BmiKgCm(0.0, 170.0);
+        new BmiKgCm(0.0, 170.0);
     }
 
 }

@@ -4,9 +4,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-/**
- * Created by andrzej on 14/03/2018.
- */
+
 public class BmiLbInTest {
     @Test
     public void calculateBmi() throws Exception {
